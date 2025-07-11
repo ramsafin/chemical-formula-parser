@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'cmake/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'cmake/**'
+      - '.github/workflows/ci.yml'
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.build_type }} on ${{ matrix.os }} with ${{ matrix.compiler }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        compiler: [gcc, clang]
+        build_type: [RelWithDebInfo]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up ${{ matrix.compiler }}
+        run: |
+          sudo apt update
+          sudo apt update && sudo apt install -y cmake ninja-build
+          if [ "${{ matrix.compiler }}" = "clang" ]; then
+            sudo apt install -y clang lld
+            echo "CC=clang" >> $GITHUB_ENV
+            echo "CXX=clang++" >> $GITHUB_ENV
+          else
+            sudo apt install -y g++ gcc
+            echo "CC=gcc" >> $GITHUB_ENV
+            echo "CXX=g++" >> $GITHUB_ENV
+          fi
+
+      - name: Configure with CMake Preset
+        run: cmake --preset ${{ matrix.compiler }}-${{ matrix.build_type }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.compiler }}-${{ matrix.build_type }}
+
+      - name: Run tests
+        run: ctest --preset ${{ matrix.compiler }}-${{ matrix.build_type }}

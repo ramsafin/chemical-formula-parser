@@ -1,0 +1,35 @@
+name: clang-format
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - '.clang-format'
+      - '.github/workflows/clang-format.yml'
+  pull_request:
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - '.clang-format'
+      - '.github/workflows/clang-format.yml'
+
+jobs:
+  format-check:
+    name: Check clang-format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt update && sudo apt install -y clang-format cmake ninja-build g++ gcc
+
+      - name: Configure project
+        run: cmake --preset gcc-RelWithDebInfo
+
+      - name: Run clang-format
+        run: cmake --build --preset gcc-RelWithDebInfo --target format-check
