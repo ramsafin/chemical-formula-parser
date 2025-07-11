@@ -21,7 +21,7 @@
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
   "editor.rulers": [
-    120
+    100
   ],
   "[cpp]": {
     "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
