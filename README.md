@@ -1,10 +1,10 @@
-# Modern C++ Project Template
+# Chemical Formula Parser
 
-> ⚡A clean starter for modern C++20 projects with CMake Presets, testing, benchmarking, sanitizers, coverage, and developer tooling.
+>> Lexing and parsing chemical formulas into element-count mappings, with support for error handling and nested groups.
 
-[![CI](https://github.com/ramsafin/modern-cpp-project-template/actions/workflows/ci.yml/badge.svg)](https://github.com/ramsafin/modern-cpp-project-template/actions/workflows/ci.yml)
-[![Clang-Format](https://github.com/ramsafin/modern-cpp-project-template/actions/workflows/clang-format.yml/badge.svg)](https://github.com/ramsafin/modern-cpp-project-template/actions/workflows/clang-format.yml)
-[![Clang-Tidy](https://github.com/ramsafin/modern-cpp-project-template/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/ramsafin/modern-cpp-project-template/actions/workflows/clang-tidy.yml)
+[![CI](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/ci.yml)
+[![Clang-Format](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-format.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-format.yml)
+[![Clang-Tidy](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-tidy.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 ## Table of Contents
@@ -26,26 +26,10 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-
-## Features
-
-- **Modern C++20+**: fully enabled C++20 with support for upgrading to C++23
-- **CMake Presets**: reproducible, platform‑agnostic builds via `CMakePresets.json`
-- **Testing**: integrated with GoogleTest using `gtest_discover_tests()`
-- **Benchmarking**: optional benchmarks with Google Benchmark
-- **Sanitizers**: ASan and UBSan runtime checks
-- **Coverage**: `gcovr`-powered HTML reports
-- **Developer Tooling**:
-  - `clang-format`, `clang-tidy`, `cppcheck` custom targets
-  - Configurable via pre-commit and CI hooks
-- **Installation**: provides `find_package(...)` integration with proper exports
-- **CI-Ready**: GitHub Actions for builds, linting, testing, and formatting
-
-
 ## Project Structure
 
 ```text
-modern-cpp-project-template/
+chemical-formula-parser/
 ├── app/                 # Optional demo application
 ├── benchmarks/          # Google Benchmark performance tests
 ├── cmake/               # Custom CMake modules (warnings, sanitizers, tooling)
@@ -93,8 +77,6 @@ cmake --list-presets
 | **Preset**          | **Notes**                                           |
 | :------------------ |:--------------------------------------------------- |
 | `check-sanitize`    | `Sanitize` → build → run tests                      |
-| `coverage-report`   | `Coverage` → build → run tests → *(generate report) |
-| `dist`              | `RelWithDebInfo` → build → package via `CPack`      |
 
 List available workflow presets:
 ```bash
@@ -117,28 +99,6 @@ cmake --build --preset gcc-RelWithDebInfo
 Run unit tests:
 ```bash
 ctest --preset gcc-RelWithDebInfo
-```
-
-## Sanitizers
-
-```bash
-cmake --preset gcc-Sanitize
-cmake --build --preset gcc-Sanitize
-ctest --preset gcc-Sanitize
-```
-
-or run the workflow:
-
-```bash
-cmake --workflow --preset check-sanitize
-```
-
-## Benchmarking
-
-```bash
-cmake --preset gcc-Release-Bench
-cmake --build --preset gcc-Release-Bench --target benchmarks
-./build/gcc-Release-Bench/benchmarks/benchmarks
 ```
 
 ## Coverage
@@ -174,8 +134,6 @@ Reformat everything:
 ```bash
 cmake --build --preset gcc-RelWithDebInfo --target format
 ```
-
-> Use a pre-commit hook to automatically check formatting before each commit.
 
 ### Static Analysis
 
@@ -216,31 +174,6 @@ Make sure CMake knows where to find the installed package:
 ```bash
 cmake -DCMAKE_PREFIX_PATH=/path/to/install ..
 ```
-
-## Packaging
-
-Once you’ve built your release­‐type binaries (e.g. `RelWithDebInfo`), you can produce `.tar.gz` and `.zip` archives via CPack:
-
-Use package presets:
-```bash
-cmake --preset gcc-Release
-cmake --build --preset gcc-Release
-cpack --preset package-gcc-Release
-```
-
-or workflow preset:
-```bash
-cmake --workflow --preset gcc-Release-dist
-```
-
-> This generates `.tar.gz` and `.zip` archives in `build/gcc-Release`.
-
-## Contributing
-
-Pull requests are welcome. Please ensure:
-- Code passes all tests
-- Code is formatted and clang-tidy clean
-- Commits follow clear, atomic changes
 
 ## License
 
