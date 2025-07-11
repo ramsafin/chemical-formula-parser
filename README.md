@@ -9,6 +9,7 @@
 
 ## Table of Contents
 
+- [Task Overview](#task-overview)
 - [Project Structure](#project-structure)
 - [Prerequisites](#prerequisites)
 - [Build Presets](#build-presets)
@@ -20,11 +21,70 @@
 - [Installation](#installation)
 - [License](#license)
 
+## Task Overview
+
+Implement a program that reads a chemical-formula-like string, parses it according to the following rules, and outputs the counts of each element.
+The output format is free: simply print all found elements and their counts. The program should be designed to be easily extendable as new parts are added.
+
+### Part 1. Single-element tokens
+
+The input is a single element token: an uppercase letter followed by optional lowercase letters, with an optional positive integer count (default = 1). Invalid tokens (zero or negative counts, incorrect casing, leading digits) must be rejected with a clear error.
+
+Examples:
+```text
+Fe   # => Fe: 1
+Fe2  # => Fe: 2
+Ag12 # => Ag: 12
+N0   # => Error
+N-1  # => Error
+cl   # => Error
+2F   # => Error
+```
+
+### Part 2. Multiple elements
+
+The input may contain a sequence of element tokens.
+Counts of repeated elements are accumulated.
+
+Examples:
+```text
+Fe2O3  # => Fe: 2, O: 3
+H2SO4  # => H: 2, S: 1, O: 4
+HOH    # => H: 2, O: 1
+```
+
+### Part 3. Bracketed groups
+
+Support grouping with parentheses `()` and square brackets `[]`, each optionally followed by a multiplier.
+Groups may nest and multiply all contained element counts.
+
+Examples:
+```text
+Fe2(SO4)3         # => Fe: 2, S: 3, O: 12
+K[Fe(NO3)2]4      # => K: 1, Fe: 4, N: 8, O: 24
+```
+
+### Part 4. Ligand groups (hydrate notation)
+
+Support ligand groups separated by `*` (asterisk). Both sides of the `*` may themselves be full formulas, optionally prefixed by a multiplier.
+
+Example:
+```text
+CuSO4 * 5H2O      # => Cu: 1, S: 1, O: (4 + 5), H: 10
+```
+
+## Features
+
+- C++17/C++20 compatible (uses `std::string_view`)
+- Exception-based error handling via a custom `FormulaError`
+- Regex-based token recognition for element symbols and counts
+- CLI app and unit tests
+
 ## Project Structure
 
 ```text
 chemical-formula-parser/
-├── app/                 # Demo application
+├── app/                 # CLI application
 ├── cmake/               # Custom CMake modules (warnings, sanitizers, tooling)
 ├── include/             # Public headers
 ├── src/                 # Library source files
