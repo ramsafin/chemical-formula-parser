@@ -3,10 +3,10 @@ Checks: >
   modernize-*,
   readability-*,
   performance-*,
-  -google-build-using-namespace,           # allow using-directives
-  -google-readability-function-size,       # skip size limits
-  -modernize-use-trailing-return-type,     # don't force C++14 punctuation
-  -readability-implicit-bool-conversion    # sometimes makes conditionals verbose
+  -google-build-using-namespace,
+  -google-readability-function-size,
+  -modernize-use-trailing-return-type,
+  -readability-implicit-bool-conversion
 
 WarningsAsErrors: ''
 
