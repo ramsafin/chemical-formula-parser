@@ -1,6 +1,6 @@
 # Chemical Formula Parser
 
-> Lexing and parsing chemical formulas into element-count mappings, with support for error handling and nested groups.
+> Lexing and parsing chemical formulas with support for error handling and nested groups.
 
 [![CI](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/ci.yml)
 [![Clang-Format](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-format.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-format.yml)
