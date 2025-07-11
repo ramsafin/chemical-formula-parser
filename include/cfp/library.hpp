@@ -1,12 +1,12 @@
-#ifndef MODERN_CPP_LIBRARY_HPP
-#define MODERN_CPP_LIBRARY_HPP
+#ifndef CHEMICAL_FORMULA_PARSER_HPP
+#define CHEMICAL_FORMULA_PARSER_HPP
 
 /**
  * @file library.hpp
  * @brief Arithmetic operations library (add, subtract, multiply).
  */
 
-namespace modern_cpp {
+namespace cfp {
 
 /**
  * @brief Adds two integers.
@@ -44,6 +44,6 @@ int multiply(int left, int right);
  */
 int divide(int left, int right);
 
-}  // namespace modern_cpp
+}  // namespace cfp
 
 #endif

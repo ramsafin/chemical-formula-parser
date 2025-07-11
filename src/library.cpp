@@ -1,8 +1,8 @@
-#include "modern_cpp/library.hpp"
+#include "cfp/library.hpp"
 
 #include <stdexcept>
 
-namespace modern_cpp {
+namespace cfp {
 
 int add(int left, int right) {
   return left + right;
@@ -23,4 +23,4 @@ int divide(int left, int right) {
   return left / right;
 }
 
-}  // namespace modern_cpp
+}  // namespace cfp

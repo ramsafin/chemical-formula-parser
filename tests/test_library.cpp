@@ -2,9 +2,9 @@
 
 #include <stdexcept>
 
-#include "modern_cpp/library.hpp"
+#include "cfp/library.hpp"
 
-using namespace modern_cpp;
+using namespace cfp;
 
 TEST(AddTests, HandlesAddition) {
   EXPECT_EQ(add(2, 3), 5);

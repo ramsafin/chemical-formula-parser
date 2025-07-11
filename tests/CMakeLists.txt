@@ -22,7 +22,7 @@ add_executable(unit_tests
 )
 
 target_link_libraries(unit_tests
-  PRIVATE gtest_main ${PROJECT_NAME}::library
+  PRIVATE gtest_main ${PROJECT_NAME}
 )
 
 enable_strict_warnings(unit_tests)

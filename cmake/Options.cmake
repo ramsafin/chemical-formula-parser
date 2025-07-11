@@ -2,7 +2,6 @@
 option(ENABLE_WARNINGS        "Enable compiler warnings"          ON)
 option(ENABLE_STRICT_WARNINGS "Treat warnings as errors"          ON)
 option(ENABLE_TESTING         "Build unit tests"                  ON)
-option(ENABLE_BENCHMARKS      "Build benchmarks"                  OFF)
 option(ENABLE_COVERAGE        "Enable coverage instrumentation"   OFF)
 option(BUILD_APP              "Build the demo application"        OFF)
 option(ENABLE_SANITIZERS      "Enable ASan / UBSan"               OFF)

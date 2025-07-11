@@ -16,14 +16,6 @@ if(ENABLE_TESTING)
   list(APPEND ALL_SOURCE_FILES ${TEST_SOURCES})
 endif()
 
-if(ENABLE_BENCHMARKS)
-  file(GLOB_RECURSE BENCH_SOURCES
-    CONFIGURE_DEPENDS
-    ${CMAKE_SOURCE_DIR}/benchmarks/*.cpp
-  )
-  list(APPEND ALL_SOURCE_FILES ${BENCH_SOURCES})
-endif()
-
 if(BUILD_APP)
   file(GLOB_RECURSE APP_SOURCES
     CONFIGURE_DEPENDS
@@ -64,7 +56,6 @@ if(ENABLE_CPPCHECK)
         --inconclusive
         --std=c++20
         --suppress=missingIncludeSystem
-        --suppress=constParameterCallback:${CMAKE_SOURCE_DIR}/benchmarks/benchmarks.cpp
         -I${CMAKE_SOURCE_DIR}/include
         ${ALL_SOURCE_FILES}
       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
