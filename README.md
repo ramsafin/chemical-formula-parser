@@ -1,6 +1,6 @@
 # Chemical Formula Parser
 
->> Lexing and parsing chemical formulas into element-count mappings, with support for error handling and nested groups.
+> Lexing and parsing chemical formulas into element-count mappings, with support for error handling and nested groups.
 
 [![CI](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/ci.yml)
 [![Clang-Format](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-format.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-format.yml)
@@ -9,29 +9,22 @@
 
 ## Table of Contents
 
-- [Features](#features)
 - [Project Structure](#project-structure)
 - [Prerequisites](#prerequisites)
 - [Build Presets](#build-presets)
 - [Workflow Presets](#workflow-presets)
 - [Building and Testing](#building-and-testing)
-- [Sanitizers](#sanitizers)
-- [Benchmarking](#benchmarking)
-- [Coverage](#coverage)
 - [Developer Tooling](#developer-tooling)
   - [Code Formatting](#code-formatting)
   - [Static Analysis](#static-analysis)
 - [Installation](#installation)
-- [Package](#packaging)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Project Structure
 
 ```text
 chemical-formula-parser/
-├── app/                 # Optional demo application
-├── benchmarks/          # Google Benchmark performance tests
+├── app/                 # Demo application
 ├── cmake/               # Custom CMake modules (warnings, sanitizers, tooling)
 ├── include/             # Public headers
 ├── src/                 # Library source files
@@ -64,8 +57,6 @@ This project uses [**CMake Presets**](https://cmake.org/cmake/help/latest/manual
 | `Release`           | Optimized builds without debug symbols                 |
 | `RelWithDebInfo`    | Optimized build with debug symbols (**recommended**)   |
 | `Sanitize`          | Builds with runtime checks enabled (ASan/UBSan)        |
-| `Coverage`          | Builds instrumented for coverage reporting             |
-| `Release-Bench`     | Builds Release + benchmarks                            |
 
 List available presets:
 ```bash
@@ -100,23 +91,6 @@ Run unit tests:
 ```bash
 ctest --preset gcc-RelWithDebInfo
 ```
-
-## Coverage
-
-```bash
-cmake --preset gcc-Coverage
-cmake --build --preset gcc-Coverage
-ctest --preset gcc-Coverage
-cmake --build --preset gcc-Coverage --target coverage
-```
-
-or run the workflow:
-```bash
-cmake --workflow --preset coverage-report
-cmake --build --preset gcc-Coverage --target coverage
-```
-
-> Find the report in `build/gcc-Coverage/coverage-report/index.html`
 
 ## Developer Tooling
 
