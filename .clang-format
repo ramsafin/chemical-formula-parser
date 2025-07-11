@@ -1,5 +1,3 @@
-# .clang-format — Based on the Google C++ Style Guide
-
 BasedOnStyle: Google
 
 # Tab vs spaces
