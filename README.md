@@ -65,9 +65,9 @@ cmake --list-presets
 
 ## Workflow Presets
 
-| **Preset**          | **Notes**                                           |
-| :------------------ |:--------------------------------------------------- |
-| `check-sanitize`    | `Sanitize` → build → run tests                      |
+| **Preset**            | **Notes**                                           |
+| :-------------------- |:--------------------------------------------------- |
+| `check-sanitize-*`    | `Sanitize` → build → run tests (GCC or Clang)       |
 
 List available workflow presets:
 ```bash
@@ -136,12 +136,11 @@ cmake --install build/gcc-RelWithDebInfo --prefix install  # or /usr/local
 - This installs the library to the `install/` directory.
 - You can also install system-wide with `--prefix /usr/local` (requires `sudo`).
 
-
 After installation, consume the library like this in another CMake project:
 ```bash
-find_package(modern_cpp REQUIRED)
-add_executable(my_app ...)
-target_link_libraries(my_app PRIVATE modern_cpp::library)
+find_package(chemical_formula_parser REQUIRED)
+add_executable(app ...)
+target_link_libraries(app PRIVATE chemical_formula_parser::chemical_formula_parser)
 ```
 
 Make sure CMake knows where to find the installed package:
