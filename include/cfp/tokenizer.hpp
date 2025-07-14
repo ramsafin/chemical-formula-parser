@@ -71,6 +71,13 @@ private:
    * @throws TokenizerError on zero value or leading-zero syntax
    */
   Token lexNumber();
+
+  /**
+   * @brief Lex single-character delimiter (parens or brackets)
+   * @param del  input character, must be one of '(', ')', '[', ']'
+   * @return token of the corresponding kind
+   */
+  Token lexDelimiter(char del);
 };
 
 }  // namespace cfp

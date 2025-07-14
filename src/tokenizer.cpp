@@ -10,6 +10,10 @@
 namespace cfp {
 
 Tokenizer::Tokenizer(std::string_view input) : input_{input} {
+  if (input.empty()) {
+    Token token{.kind = TokenKind::Invalid, .text = ""};
+    throw TokenizerError{0, input_, token, "empty input not allowed"};
+  }
   nextToken();
 }
 
@@ -27,28 +31,32 @@ void Tokenizer::nextToken() {
     return;
   }
 
-  const char curr_char = input_[pos_];
+  const char currChar = input_[pos_];
 
-  if (std::isspace(static_cast<unsigned char>(curr_char))) {
+  if (std::isspace(static_cast<unsigned char>(currChar))) {
     Token token{.kind = TokenKind::Invalid, .text = input_.substr(pos_, 1)};
     throw TokenizerError{pos_, input_, token, "whitespace not allowed"};
   }
 
   // [A-Z][a-z]*
-  if (std::isupper(static_cast<unsigned char>(curr_char))) {
+  if (std::isupper(static_cast<unsigned char>(currChar))) {
     currToken_ = lexElement();
     return;
   }
 
   // [1-9]?[0-9]*
-  if (std::isdigit(static_cast<unsigned char>(curr_char))) {
+  if (std::isdigit(static_cast<unsigned char>(currChar))) {
     currToken_ = lexNumber();
     return;
   }
 
-  // any other single character is invalid
+  if (currChar == '(' || currChar == ')' || currChar == '[' || currChar == ']') {
+    currToken_ = lexDelimiter(currChar);
+    return;
+  }
+
   Token token{.kind = TokenKind::Invalid, .text = input_.substr(pos_, 1)};
-  throw TokenizerError{pos_, input_, token, std::format("unexpected character '{}'", curr_char)};
+  throw TokenizerError{pos_, input_, token, std::format("unexpected character '{}'", currChar)};
 }
 
 Token Tokenizer::lexElement() {
@@ -83,6 +91,28 @@ Token Tokenizer::lexNumber() {
     throw TokenizerError{start, input_, token, "invalid count (leading zero)"};
   }
 
+  return token;
+}
+
+Token Tokenizer::lexDelimiter(char del) {
+  Token token;
+  switch (del) {
+    case '(':
+      token = {.kind = TokenKind::LParen, .text = "("};
+      break;
+    case ')':
+      token = {.kind = TokenKind::RParen, .text = ")"};
+      break;
+    case '[':
+      token = {.kind = TokenKind::LBracket, .text = "["};
+      break;
+    case ']':
+      token = {.kind = TokenKind::RBracket, .text = "]"};
+      break;
+    default:
+      token = {.kind = TokenKind::Invalid, .text = input_.substr(pos_, 1)};
+  }
+  pos_ += 1;
   return token;
 }
 

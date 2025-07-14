@@ -88,7 +88,54 @@ INSTANTIATE_TEST_SUITE_P(
         {cfp::TokenKind::Element, "H",   std::nullopt},
         {cfp::TokenKind::End,     "",    std::nullopt}
       }
-    )
+    ),
+       // Single delimiters
+    std::make_tuple("(", std::vector<token_tuple_t>{
+      {cfp::TokenKind::LParen,   "(",  std::nullopt},
+      {cfp::TokenKind::End,       "",   std::nullopt}
+    }),
+    std::make_tuple(")", std::vector<token_tuple_t>{
+      {cfp::TokenKind::RParen,   ")",  std::nullopt},
+      {cfp::TokenKind::End,       "",   std::nullopt}
+    }),
+    std::make_tuple("[", std::vector<token_tuple_t>{
+      {cfp::TokenKind::LBracket, "[",  std::nullopt},
+      {cfp::TokenKind::End,       "",   std::nullopt}
+    }),
+    std::make_tuple("]", std::vector<token_tuple_t>{
+      {cfp::TokenKind::RBracket, "]",  std::nullopt},
+      {cfp::TokenKind::End,       "",   std::nullopt}
+    }),
+    // Paired delimiters
+    std::make_tuple("()", std::vector<token_tuple_t>{
+      {cfp::TokenKind::LParen,   "(",  std::nullopt},
+      {cfp::TokenKind::RParen,   ")",  std::nullopt},
+      {cfp::TokenKind::End,       "",   std::nullopt}
+    }),
+    std::make_tuple("[]", std::vector<token_tuple_t>{
+      {cfp::TokenKind::LBracket, "[",  std::nullopt},
+      {cfp::TokenKind::RBracket, "]",  std::nullopt},
+      {cfp::TokenKind::End,       "",   std::nullopt}
+    }),
+    // Mixed tokens with delimiters and numbers
+    std::make_tuple("(SO4)3", std::vector<token_tuple_t>{
+      {cfp::TokenKind::LParen,   "(",   std::nullopt},
+      {cfp::TokenKind::Element,  "S",   std::nullopt},
+      {cfp::TokenKind::Element,  "O",   std::nullopt},
+      {cfp::TokenKind::Number,   "4",    4},
+      {cfp::TokenKind::RParen,   ")",   std::nullopt},
+      {cfp::TokenKind::Number,   "3",    3},
+      {cfp::TokenKind::End,       "",   std::nullopt}
+    }),
+    std::make_tuple("Fe2[O3]", std::vector<token_tuple_t>{
+      {cfp::TokenKind::Element,  "Fe",  std::nullopt},
+      {cfp::TokenKind::Number,   "2",    2},
+      {cfp::TokenKind::LBracket, "[",   std::nullopt},
+      {cfp::TokenKind::Element,  "O",   std::nullopt},
+      {cfp::TokenKind::Number,   "3",    3},
+      {cfp::TokenKind::RBracket, "]",   std::nullopt},
+      {cfp::TokenKind::End,       "",   std::nullopt}
+    })
   )
 );
 // clang-format on
@@ -125,6 +172,7 @@ INSTANTIATE_TEST_SUITE_P(
   InvalidCases,
   TokenizerInvalidTest,
   ::testing::Values(
+    InvalidCase{"",   "empty input not allowed"},
     InvalidCase{" ",   "whitespace not allowed"},
     InvalidCase{"H 2", "whitespace not allowed"},
     InvalidCase{"cl",  "unexpected character 'c'"},
@@ -132,7 +180,11 @@ INSTANTIATE_TEST_SUITE_P(
     InvalidCase{"H01", "leading zero"},
     InvalidCase{"H-2", "unexpected character '-'"},
     InvalidCase{"H$",  "unexpected character '$'"},
-    InvalidCase{"$H",  "unexpected character '$'"}
+    InvalidCase{"$H",  "unexpected character '$'"},
+    InvalidCase{" (",  "whitespace not allowed"},
+    InvalidCase{" )",  "whitespace not allowed"},
+    InvalidCase{"( )",  "whitespace not allowed"},
+    InvalidCase{"[ ]",  "whitespace not allowed"}
   )
 );
 // clang-format on

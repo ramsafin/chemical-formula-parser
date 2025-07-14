@@ -75,9 +75,17 @@ CuSO4 * 5H2O      # => Cu: 1, S: 1, O: (4 + 5), H: 10
 ## Features
 
 - C++20 compatible (uses `std::string_view`)
-- Exception-based error handling via a custom `FormulaError`
-- Regex-based token recognition for element symbols and counts
-- CLI app and unit tests
+- AST-based parser for chemical formulas:
+  - Single‐element tokens (e.g. `Fe`, `O2`)
+  - Multi‐element accumulation (e.g. `H2SO4`, `Fe2Fe3`)
+  - Bracketed groups with multipliers and nesting:
+    - Parentheses `(...)` and square brackets `[...]`
+    - Arbitrary nesting depth (e.g. `K[Fe(NO3)2]4`)
+- Exception-based error handling:
+  - `TokenizerError` for lexing issues (invalid characters, zero or leading-zero counts, empty input)
+  - `ParserError` for grammar errors (unexpected tokens, mismatched or empty groups)
+- CLI application (for demo purposes)
+- Comprehensive unit tests
 
 ## Project Structure
 

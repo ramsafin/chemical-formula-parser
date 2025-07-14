@@ -24,16 +24,20 @@ INSTANTIATE_TEST_SUITE_P(
   ValidCases,
   ParserValidTest,
   ::testing::Values(
-    std::make_tuple("H",         ExpectedMap{{"H",   1}}),
-    std::make_tuple("O2",        ExpectedMap{{"O",   2}}),
-    std::make_tuple("H2O",       ExpectedMap{{"H",   2}, {"O", 1}}),
-    std::make_tuple("HOH",       ExpectedMap{{"H",   2}, {"O", 1}}),
-    std::make_tuple("Fe2O3",     ExpectedMap{{"Fe",  2}, {"O", 3}}),
-    std::make_tuple("NaCl",      ExpectedMap{{"Na",  1}, {"Cl",1}}),
-    std::make_tuple("C12H22O11", ExpectedMap{{"C",  12}, {"H",22}, {"O",11}}),
-    std::make_tuple("HHH",       ExpectedMap{{"H",   3}}),
-    std::make_tuple("Fe2Fe3",    ExpectedMap{{"Fe",  5}}),
-    std::make_tuple("CH",        ExpectedMap{{"C",   1}, {"H", 1}})
+    // simple parentheses
+    std::make_tuple("Mg(OH)2",      ExpectedMap{{"Mg",1}, {"O",2}, {"H",2}}),
+    std::make_tuple("(H)",          ExpectedMap{{"H",1}}),
+    std::make_tuple("((H)2)3",      ExpectedMap{{"H",6}}),
+    // sulfate example
+    std::make_tuple("Fe2(SO4)3",    ExpectedMap{{"Fe",2}, {"S",3}, {"O",12}}),
+    // nested brackets and parens
+    std::make_tuple("K[Fe(NO3)2]4", ExpectedMap{{"K",1}, {"Fe",4}, {"N",8}, {"O",24}}),
+    // square‐bracket only
+    std::make_tuple("Al[OH]3",      ExpectedMap{{"Al",1}, {"O",3}, {"H",3}}),
+    // combination of multiple groups
+    std::make_tuple("Ca(OH)2H2",    ExpectedMap{{"Ca",1}, {"O",2}, {"H",4}}),
+    // no multiplier = default 1
+    std::make_tuple("Na[Cl]",       ExpectedMap{{"Na",1}, {"Cl",1}})
   )
 );
 // clang-format on
@@ -57,19 +61,22 @@ INSTANTIATE_TEST_SUITE_P(
   InvalidCases,
   ParserInvalidTest,
   ::testing::Values(
-    ""      ,  // empty string
-    "2H"    ,  // leading digit
-    "cl"    ,  // lowercase element
-    "H0"    ,  // zero count
-    "H01"   ,  // leading zero
-    "H-2"   ,  // invalid character '-'
-    "H2O$"  ,  // invalid character '$'
-    " H2O"  ,  // leading whitespace
-    "H2O "  ,  // trailing whitespace
-    "(HO)"  ,  // unsupported parentheses
-    "HO)"   ,  // stray closing parenthesis
-    "*HO"   ,  // unsupported ligand syntax
-    "Fe2 O3"   // whitespace in formula
+    "",               // empty
+    "()",             // empty group
+    "(]"              // mismtached brackets
+    "(",              // missing closing paren
+    "H2O)",           // stray closing paren
+    "[H2O",           // missing closing bracket
+    "H2O]",           // stray closing bracket
+    "(H2O]2",         // mismatched brackets
+    "Fe2(SO4)0",      // zero multiplier on group
+    "Fe2(SO4)03",     // leading zero on group multiplier
+    "Mg(O0H)2",       // zero count inside group
+    "K[Fe(NO3)2]4a",  // trailing invalid char
+    "Ca(OH)2)H2",     // extra closing paren in middle
+    "Al[OH3",         // missing closing bracket after number
+    "Al(OH",          // missing closing paren
+    "Al(OH)1.5"       // fractional multiplier invalid
   )
 );
 // clang-format on
