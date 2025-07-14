@@ -33,11 +33,10 @@ public:
   [[nodiscard]] const Token &peek() const;
 
   /**
-   * @brief Consumes and returns the current token, advances to the next one.
-   * @return previous token (before advancement)
+   * @brief Consumes the current token, advances to the next one
    * @throws TokenizerError if the next lexeme is invalid
    */
-  Token next();
+  void next();
 
 private:
   // full input being tokenized

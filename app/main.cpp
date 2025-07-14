@@ -5,7 +5,7 @@
 #include "cfp/tokenizer_error.hpp"
 
 int main() {
-  cfp::Parser parser{"H2O"};
+  cfp::Parser parser{"cl"};
 
   try {
     for (const auto &[element, count] : parser.parse()) {

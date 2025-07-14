@@ -17,10 +17,8 @@ const Token &Tokenizer::peek() const {
   return currToken_;
 }
 
-Token Tokenizer::next() {
-  Token prev = currToken_;
+void Tokenizer::next() {
   nextToken();
-  return prev;
 }
 
 void Tokenizer::nextToken() {
