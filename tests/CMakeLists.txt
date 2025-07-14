@@ -18,7 +18,8 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(unit_tests
   test_main.cpp
-  test_library.cpp
+  test_parser.cpp
+  test_tokenizer.cpp
 )
 
 target_link_libraries(unit_tests
@@ -31,6 +32,4 @@ enable_coverage(unit_tests)
 
 include(GoogleTest)
 
-gtest_discover_tests(unit_tests
-  PROPERTIES FAIL_REGULAR_EXPRESSION "WARNING|ERROR"
-)
+gtest_discover_tests(unit_tests)

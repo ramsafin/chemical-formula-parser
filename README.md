@@ -23,8 +23,7 @@
 
 ## Task Overview
 
-Implement a program that reads a chemical-formula-like string, parses it according to the following rules, and outputs the counts of each element.
-The output format is free: simply print all found elements and their counts. The program should be designed to be easily extendable as new parts are added.
+Implement a program that reads a chemical-formula-like string, parses it according to the following rules, and outputs the counts of each element. The output format is free: simply print all found elements and their counts. The program should be designed to be easily extendable as new parts are added.
 
 ### Part 1. Single-element tokens
 
@@ -75,7 +74,7 @@ CuSO4 * 5H2O      # => Cu: 1, S: 1, O: (4 + 5), H: 10
 
 ## Features
 
-- C++17/C++20 compatible (uses `std::string_view`)
+- C++20 compatible (uses `std::string_view`)
 - Exception-based error handling via a custom `FormulaError`
 - Regex-based token recognition for element symbols and counts
 - CLI app and unit tests

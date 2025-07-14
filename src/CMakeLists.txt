@@ -1,5 +1,10 @@
 add_library(${PROJECT_NAME} STATIC
-  library.cpp
+  token.cpp
+  token_kind.cpp
+  tokenizer.cpp
+  tokenizer_error.cpp
+  parser.cpp
+  parser_error.cpp
 )
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

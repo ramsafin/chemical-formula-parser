@@ -16,7 +16,7 @@
         "ENABLE_STRICT_WARNINGS": "ON",
         "ENABLE_TESTING": "ON",
         "ENABLE_COVERAGE": "OFF",
-        "BUILD_APP": "OFF",
+        "BUILD_APP": "ON",
         "ENABLE_ASAN": "OFF",
         "ENABLE_UBSAN": "OFF",
         "ENABLE_SANITIZERS": "OFF",
@@ -207,9 +207,6 @@
       "name": "test-base",
       "hidden": true,
       "description": "Shared test settings for all configurations",
-      "output": {
-        "outputOnFailure": true
-      },
       "execution": {
         "noTestsAction": "error",
         "stopOnFailure": true
