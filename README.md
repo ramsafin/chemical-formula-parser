@@ -3,7 +3,7 @@
 > Lexing and parsing chemical formulas with support for error handling and nested groups.
 
 [![CI](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/ramsafin/chemical-formula-parser/branch/main/graph/badge.svg)](https://codecov.io/gh/ramsafin/chemical-formula-parser)
+[![codecov](https://codecov.io/gh/ramsafin/chemical-formula-parser/graph/badge.svg?token=5M7YCKRVJO)](https://codecov.io/gh/ramsafin/chemical-formula-parser)
 [![Clang-Format](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-format.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-format.yml)
 [![Clang-Tidy](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/ramsafin/chemical-formula-parser/actions/workflows/clang-tidy.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
