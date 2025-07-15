@@ -10,6 +10,7 @@ on:
       - 'CMakePresets.json'
       - 'cmake/**'
       - '.github/workflows/ci.yml'
+  workflow_dispatch:
 
 jobs:
   build-and-test:

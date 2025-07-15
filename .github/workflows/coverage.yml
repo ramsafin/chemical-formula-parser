@@ -25,6 +25,13 @@ jobs:
       - name: Install build and coverage tools
         run: sudo apt update && sudo apt install -y gcc g++ ccache gcovr lcov ccache
 
+      - name: Configure → Build → Test (Coverage)
+        env:
+          CCACHE_DIR: ~/.ccache
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
+        run: cmake --workflow --preset coverage-report
+
       - name: Cache ccache
         uses: actions/cache@v3
         with:
@@ -36,13 +43,6 @@ jobs:
         with:
           path: build/gcc-Coverage
           key: ${{ runner.os }}-build-gcc-Coverage
-
-      - name: Configure → Build → Test (Coverage)
-        env:
-          CCACHE_DIR: ~/.ccache
-          CMAKE_C_COMPILER_LAUNCHER: ccache
-          CMAKE_CXX_COMPILER_LAUNCHER: ccache
-        run: cmake --workflow --preset coverage-report
 
       - name: Generate coverage XML
         run: cmake --build --preset gcc-Coverage --target coverage
