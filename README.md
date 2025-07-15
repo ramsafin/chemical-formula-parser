@@ -19,8 +19,6 @@
 - [Application](#application)
 - [Parsing Rules](#parsing-rules)
 - [Developer Tooling](#developer-tooling)
-  - [Code Formatting](#code-formatting)
-  - [Static Analysis](#static-analysis)
 - [Installation](#installation)
 - [License](#license)
 
