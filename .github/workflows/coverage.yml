@@ -1,0 +1,40 @@
+name: Coverage
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - 'cmake/**'
+      - '.github/workflows/coverage.yml'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '**/*.cpp'
+      - '**/*.hpp'
+      - 'cmake/**'
+      - '.github/workflows/coverage.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up
+        run: |
+          sudo apt update && sudo apt install -y cmake ninja-build gcc g++ cmake gcovr lcov
+
+      - name: Run the workflow
+        run: cmake --workflow --preset coverage-report
+
+      - name: Generate XML
+        run: cmake --build --preset gcc-Coverage --target coverage
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: build/gcc-Coverage/coverage.xml
+          fail_ci_if_error: true
