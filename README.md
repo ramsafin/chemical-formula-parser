@@ -255,7 +255,7 @@ After installation, consume the library like this in another CMake project:
 ```bash
 find_package(chemical_formula_parser REQUIRED)
 add_executable(app ...)
-target_link_libraries(app PRIVATE chemical_formula_parser::chemical_formula_parser)
+target_link_libraries(app PRIVATE cfp::cfp)
 ```
 
 Make sure CMake knows where to find the installed package:
