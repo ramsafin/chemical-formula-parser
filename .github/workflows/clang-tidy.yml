@@ -2,16 +2,7 @@ name: clang-tidy
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      - '**/*.cpp'
-      - '**/*.hpp'
-      - '.clang-tidy'
-      - 'CMakePresets.json'
-      - 'CMakeLists.txt'
-      - '.github/workflows/clang-tidy.yml'
-  pull_request:
+    branches: [master]
     paths:
       - '**/*.cpp'
       - '**/*.hpp'
@@ -22,15 +13,18 @@ on:
 
 jobs:
   lint:
-    name: Clang-Tidy Analysis
+    name: Clang-Tidy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
       - name: Install dependencies
-        run: sudo apt update && sudo apt install -y clang-tidy cmake ninja-build g++ gcc
+        run: sudo apt update && sudo apt install -y clang-tidy g++ gcc ninja-build
 
       - name: Configure project
         run: cmake --preset gcc-RelWithDebInfo
