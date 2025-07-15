@@ -23,7 +23,7 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Install build and coverage tools
-        run: sudo apt update && sudo apt install -y gcc g++ ccache gcovr lcov ccache
+        run: sudo apt update && sudo apt install -y gcc g++ ccache gcovr lcov
 
       - name: Configure → Build → Test (Coverage)
         env:
@@ -34,13 +34,6 @@ jobs:
 
       - name: Generate coverage XML
         run: cmake --build --preset gcc-Coverage --target coverage
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: build/gcc-Coverage/coverage.xml
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
 
       - name: Cache ccache
         uses: actions/cache@v3
@@ -53,3 +46,10 @@ jobs:
         with:
           path: build/gcc-Coverage
           key: ${{ runner.os }}-build-gcc-Coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: build/gcc-Coverage/coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
