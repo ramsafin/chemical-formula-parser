@@ -135,9 +135,10 @@ cmake --list-presets
 
 ## Workflow Presets
 
-| **Preset**            | **Notes**                                           |
-| :-------------------- |:--------------------------------------------------- |
-| `check-sanitize-*`    | `Sanitize` → build → run tests (GCC or Clang)       |
+| **Preset**            | **Notes**                                                         |
+| :-------------------- |:----------------------------------------------------------------- |
+| `check-sanitize-*`    | `Sanitize` → build → run tests (GCC or Clang)                     |
+| `coverage-report`     | `Coverage` → build → run tests (GCC) + generate report (manually) |
 
 List available workflow presets:
 ```bash
@@ -148,6 +149,14 @@ Run workflows with:
 ```bash
 cmake --workflow --preset check-sanitize
 ```
+
+### Coverage Report
+
+```bash
+cmake --workflow --preset coverage-report
+cmake --build --preset gcc-Coverage --target coverage
+```
+> This will generate an XML coverage report `./build/gcc-Coverage/coverage.xml`
 
 ## Building and Testing
 
