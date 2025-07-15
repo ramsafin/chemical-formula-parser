@@ -15,6 +15,8 @@
 - [Build Presets](#build-presets)
 - [Workflow Presets](#workflow-presets)
 - [Building and Testing](#building-and-testing)
+- [Application](#application)
+- [Parsing Rules](#parsing-rules)
 - [Developer Tooling](#developer-tooling)
   - [Code Formatting](#code-formatting)
   - [Static Analysis](#static-analysis)
@@ -176,6 +178,32 @@ Enter formula (Ctrl-D to quit):
 ... # outout 1
 > H2O
 ... # output 2
+```
+
+## Parsing Rules
+
+Two‐phase approach:
+1. Lexing into tokens.
+2. Recursive‐descent parsing into AST.
+
+```bnf
+<ligand>  ::= <unit> ( "*" <unit> )*
+<unit>    ::= [ <Number> ] <formula>
+<formula> ::= <group>*
+<group>   ::= <Element> [ <Number> ]
+            | "(" <formula> ")" [ <Number> ]
+            | "[" <formula> "]" [ <Number> ]
+
+<Element> ::= UppercaseLetter { LowercaseLetter }
+<Number>  ::= Digit { Digit }   ; positive integer, no leading zeros
+
+; single-character tokens
+LParen   ::= "("
+RParen   ::= ")"
+LBracket ::= "["
+RBracket ::= "]"
+Star     ::= "*"            ; ligand operator
+End      ::= end‐of‐input   ; EOF marker
 ```
 
 ## Developer Tooling
