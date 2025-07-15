@@ -27,6 +27,8 @@
 
 Implement a program that reads a chemical-formula-like string, parses it according to the following rules, and outputs the counts of each element. The output format is free: simply print all found elements and their counts. The program should be designed to be easily extendable as new parts are added.
 
+> Each part is implemented step-by-step (see the tags to refer to each part).
+
 ### Part 1. Single-element tokens
 
 The input is a single element token: an uppercase letter followed by optional lowercase letters, with an optional positive integer count (default = 1). Invalid tokens (zero or negative counts, incorrect casing, leading digits) must be rejected with a clear error.
