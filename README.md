@@ -176,7 +176,7 @@ Interactive REPL:
 ./build/gcc-RelWithDebInfo/cfp_app
 Enter formula (Ctrl-D to quit):
 > K[Fe(NO3)2]4
-... # outout 1
+... # output 1
 > H2O
 ... # output 2
 ```
