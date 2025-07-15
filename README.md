@@ -69,7 +69,7 @@ Support ligand groups separated by `*` (asterisk). Both sides of the `*` may the
 
 Example:
 ```text
-CuSO4 * 5H2O      # => Cu: 1, S: 1, O: (4 + 5), H: 10
+CuSO4*5H2O      # => Cu: 1, S: 1, O: (4 + 5), H: 10
 ```
 
 ## Features
