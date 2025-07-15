@@ -10,19 +10,10 @@ on:
       - 'CMakePresets.json'
       - 'cmake/**'
       - '.github/workflows/ci.yml'
-  pull_request:
-    branches: [ master ]
-    paths:
-      - '**/*.cpp'
-      - '**/*.hpp'
-      - 'CMakeLists.txt'
-      - 'CMakePresets.json'
-      - 'cmake/**'
-      - '.github/workflows/ci.yml'
 
 jobs:
   build-and-test:
-    name: ${{ matrix.build_type }} on ${{ matrix.os }} with ${{ matrix.compiler }}
+    name: ${{ matrix.compiler }}-${{ matrix.build_type }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -31,27 +22,20 @@ jobs:
         build_type: [Sanitize, Release]
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up ${{ matrix.compiler }}
-        run: |
-          sudo apt update && sudo apt install -y cmake ninja-build
-          if [ "${{ matrix.compiler }}" = "clang" ]; then
-            sudo apt install -y clang lld
-            echo "CC=clang" >> $GITHUB_ENV
-            echo "CXX=clang++" >> $GITHUB_ENV
-          else
-            sudo apt install -y g++ gcc
-            echo "CC=gcc" >> $GITHUB_ENV
-            echo "CXX=g++" >> $GITHUB_ENV
-          fi
+      - name: Install CMake and Ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Install build tools
+        run: sudo apt update && sudo apt install -y clang lld gcc g++
 
       - name: Configure with CMake Preset
         run: cmake --preset ${{ matrix.compiler }}-${{ matrix.build_type }}
 
-      - name: Build
+      - name: Build (Ninja)
         run: cmake --build --preset ${{ matrix.compiler }}-${{ matrix.build_type }}
 
-      - name: Run tests
+      - name: Run tests (ctest)
         run: ctest --preset ${{ matrix.compiler }}-${{ matrix.build_type }}
