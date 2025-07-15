@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23 FATAL_ERROR)
-project(chemical_formula_parser LANGUAGES CXX VERSION 0.1.0)
+project(cfp LANGUAGES CXX VERSION 0.1.0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
