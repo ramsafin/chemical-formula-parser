@@ -19,11 +19,23 @@ jobs:
         uses: actions/checkout@v4
         with: { fetch-depth: 0 }
 
-      - name: Install CMake and Ninja
+      - name: Install CMake
         uses: lukka/get-cmake@latest
 
       - name: Install build and coverage tools
-        run: sudo apt update && sudo apt install -y gcc g++ ccache gcovr lcov
+        run: sudo apt update && sudo apt install -y gcc g++ ccache gcovr lcov ninja-build
+
+      - name: Restore ccache
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ${{ runner.os }}-ccache-gcc-Coverage
+
+      - name: Restore build directory
+        uses: actions/cache@v3
+        with:
+          path: build/gcc-Coverage
+          key: ${{ runner.os }}-build-gcc-Coverage
 
       - name: Configure → Build → Test (Coverage)
         env:
@@ -35,13 +47,13 @@ jobs:
       - name: Generate coverage XML
         run: cmake --build --preset gcc-Coverage --target coverage
 
-      - name: Cache ccache
+      - name: Save ccache
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/.ccache
           key: ${{ runner.os }}-ccache-gcc-Coverage
 
-      - name: Cache build directory
+      - name: Save build directory
         uses: actions/cache@v3
         with:
           path: build/gcc-Coverage

@@ -25,22 +25,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
 
-      - name: Install CMake and Ninja
+      - name: Install CMake
         uses: lukka/get-cmake@latest
 
       - name: Install build tools
-        run: sudo apt update && sudo apt install -y clang lld gcc g++ ccache
+        run: sudo apt update && sudo apt install -y clang lld gcc g++ ccache ninja-build
 
-      - name: Cache ccache
+      - name: Restore ccache
         uses: actions/cache@v3
         with:
-          path: ~/.ccache
+          path: ${{ github.workspace }}/.ccache
+          key: ${{ runner.os }}-ccache-${{ matrix.compiler }}-${{ matrix.build_type }}
+
+      - name: Restore build directory
+        uses: actions/cache@v3
+        with:
+          path: build/${{ matrix.compiler }}-${{ matrix.build_type }}
           key: ${{ runner.os }}-ccache-${{ matrix.compiler }}-${{ matrix.build_type }}
 
       - name: Configure with CMake Preset
         env:
-          CCACHE_DIR: ~/.ccache
+          CCACHE_DIR: ${{ github.workspace }}/.ccache
           CMAKE_C_COMPILER_LAUNCHER: ccache
           CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: cmake --preset ${{ matrix.compiler }}-${{ matrix.build_type }}
@@ -50,3 +57,15 @@ jobs:
 
       - name: Run tests (ctest)
         run: ctest --preset ${{ matrix.compiler }}-${{ matrix.build_type }}
+
+      - name: Save ccache
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ${{ runner.os }}-ccache-${{ matrix.compiler }}-${{ matrix.build_type }}
+
+      - name: Save build directory
+        uses: actions/cache@v3
+        with:
+          path: build/${{ matrix.compiler }}-${{ matrix.build_type }}
+          key: ${{ runner.os }}-ccache-${{ matrix.compiler }}-${{ matrix.build_type }}
