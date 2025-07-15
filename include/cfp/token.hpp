@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstdint>  // uint64_t
+#include <iosfwd>  // ostream
 #include <optional>
-#include <ostream>
 #include <string_view>
 
 #include "cfp/token_kind.hpp"
@@ -11,27 +11,28 @@ namespace cfp {
 
 /**
  * @struct Token
- * @brief Single lexical token produced by tokenizer
+ * @brief Lexical token produced by the tokenizer.
  */
 struct Token {
-  // category of token
-  TokenKind kind;
+  /// Category (Element, Number, etc.).
+  TokenKind kind{TokenKind::Invalid};
 
-  // raw lexeme text
+  /// Exact slice of the input this token represents.
   std::string_view text;
 
-  // numeric value (only for Number tokens)
+  /// For Number tokens only, the parsed positive integer.
   std::optional<uint64_t> value{std::nullopt};
 };
 
 /**
- * @brief Helper to output tokens into streams
+ * @brief Output stream operator for tokens.
  *
- * Prints token kind and its text, plus “{value}” if present.
+ * Renders as, e.g. `Element("Fe")` or `Number("12"){12}`.
  *
- * @param os     output stream
- * @param token  token to print
+ * @param os     Destination stream
+ * @param token  The token to print
+ * @return       Reference to @a os
  */
-std::ostream &operator<<(std::ostream &os, Token const &token);  // NOLINT(*-length)
+std::ostream &operator<<(std::ostream &os, const Token &token);  // NOLINT(*-identifier-length)
 
 }  // namespace cfp

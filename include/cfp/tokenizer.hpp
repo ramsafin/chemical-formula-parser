@@ -9,75 +9,70 @@ namespace cfp {
 
 /**
  * @class Tokenizer
- * @brief Lexical analyzer for simple chemical-formula tokens (Part 1)
+ * @brief Lexical analyzer for chemical-formula tokens.
  *
- * Splits the input string into a sequence of Tokens:
- *  - Element: uppercase letter followed by zero or more lowercase letters
- *  - Number:  sequence of digits (validated to be ≥1, no leading zeros)
- *  - End:     end-of-input marker
- *  - Invalid: single-character lexemes that violate rules
+ * Recognizes the following tokens:
+ *   - Element:  uppercase letter followed by zero or more lowercase letters
+ *   - Number:   a sequence of digits (positive integer, no leading zeros)
+ *   - LParen:   '('
+ *   - RParen:   ')'
+ *   - LBracket: '['
+ *   - RBracket: ']'
+ *   - Star:     '*' (ligand separator)
+ *   - End:      EOF marker
+ *
+ * Throws TokenizerError on any invalid lexeme.
  */
 class Tokenizer {
 public:
   /**
-   * @brief Constructs Tokenizer and consumes the first token
-   * @param input formula string to tokenize)
-   * @throws TokenizerError on any invalid lexeme at position 0
+   * @brief Construct and consume the first token.
+   * @param input  Formula string to tokenize (must not be empty).
+   * @throws TokenizerError if input is empty or the first lexeme is invalid.
    */
   explicit Tokenizer(std::string_view input);
 
   /**
-   * @brief Peeks at the current token without consuming it
-   * @return const reference to the current token
+   * @brief Peek at the current token without consuming it.
+   * @return Const reference to the current Token.
    */
-  [[nodiscard]] const Token &peek() const;
+  [[nodiscard]] const Token &peek() const noexcept;
 
   /**
-   * @brief Consumes the current token, advances to the next one
-   * @throws TokenizerError if the next lexeme is invalid
+   * @brief Consume the current token and advance to the next one.
+   * @throws TokenizerError if the next lexeme is invalid.
    */
   void next();
 
 private:
-  // full input being tokenized
+  /// Entire input being tokenized.
   std::string_view input_;
 
-  // current character index in input
-  size_t pos_{0};
+  // Current index in input (zero-based offset).
+  size_t offset_{0};
 
-  // the most recently lexed token
-  Token currToken_;
-
-  /**
-   * @brief Lex the next token from input
-   *
-   * Recognizes Element and Number tokens
-   * Throws TokenizerError on whitespace or invalid character
-   */
-  void nextToken();
+  // Most recently lexed token.
+  Token curr_token_;
 
   /**
-   * @brief Lex Element token starting at the current position
-   * @return Element token
+   * @brief Lex an Element token at the current position.
+   * @return A Token of kind Element with its text.
    */
-  Token lexElement();
+  Token lexElementToken();
 
   /**
-   * @brief Lex Number token starting at the current position
-   *
-   * Validates that the parsed integer is ≥ 1 and has no leading zeros
-   *
-   * @return Number token with value set
-   * @throws TokenizerError on zero value or leading-zero syntax
+   * @brief Lex a Number token at the current position.
+   * @return A Token of kind Number with its text and numeric value.
+   * @throws TokenizerError on zero value or leading zero.
    */
-  Token lexNumber();
+  Token lexNumberToken();
 
   /**
-   * @brief Lex single-character delimiter (parens or brackets)
-   * @param del  input character, must be one of '(', ')', '[', ']'
-   * @return token of the corresponding kind
+   * @brief Lex a single‐character token: '(', ')', '[', ']', or '*'.
+   * @param del The delimiter character.
+   * @return A Token of the corresponding kind.
    */
-  Token lexDelimiter(char del);
+  Token lexSingleCharToken(char del);
 };
 
 }  // namespace cfp

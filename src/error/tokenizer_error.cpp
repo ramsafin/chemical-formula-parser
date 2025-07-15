@@ -1,4 +1,4 @@
-#include "cfp/tokenizer_error.hpp"
+#include "cfp/error/tokenizer_error.hpp"
 
 #include <format>
 
@@ -6,7 +6,7 @@
 
 namespace cfp {
 
-TokenizerError::TokenizerError(size_t pos, std::string_view in,  // NOLINT(*-length)
+TokenizerError::TokenizerError(size_t pos, std::string_view in,  // NOLINT(*-identifier-length)
                                const Token &tok, std::string_view msg) :
     // clang-format off
     std::runtime_error{std::format(
@@ -14,6 +14,6 @@ TokenizerError::TokenizerError(size_t pos, std::string_view in,  // NOLINT(*-len
       msg, tok.text, to_string(tok.kind), pos, in
     )},
     // clang-format on
-    position{pos}, input{in}, token{tok} {}
+    offset{pos}, input{in}, token{tok} {}
 
 }  // namespace cfp

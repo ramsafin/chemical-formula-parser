@@ -1,16 +1,15 @@
 add_library(${PROJECT_NAME} STATIC
   token.cpp
-  token_kind.cpp
   tokenizer.cpp
-  tokenizer_error.cpp
   parser.cpp
-  parser_error.cpp
+  error/parser_error.cpp
+  error/tokenizer_error.cpp
 )
 
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-# Forcing C++20 standard
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+# Forcing CMAKE_CXX_STANDARD standard on the library
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC

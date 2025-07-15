@@ -1,119 +1,135 @@
 #include "cfp/tokenizer.hpp"
 
+#include <cassert>
 #include <cctype>  // std::isspace, std::isupper, std::islower, std::isdigit
 #include <cstdint>  // uint64_t
 #include <format>
-#include <string>
+#include <string>  // stoull
 
-#include "cfp/tokenizer_error.hpp"
+#include "cfp/error/tokenizer_error.hpp"
 
 namespace cfp {
 
 Tokenizer::Tokenizer(std::string_view input) : input_{input} {
   if (input.empty()) {
-    Token token{.kind = TokenKind::Invalid, .text = ""};
-    throw TokenizerError{0, input_, token, "empty input not allowed"};
+    throw TokenizerError{0, input_, {.kind = TokenKind::Invalid, .text = {}}, "empty input not allowed"};
   }
-  nextToken();
+  // consume the first token
+  next();
 }
 
-const Token &Tokenizer::peek() const {
-  return currToken_;
+const Token &Tokenizer::peek() const noexcept {
+  return curr_token_;
 }
 
 void Tokenizer::next() {
-  nextToken();
+  if (offset_ >= input_.size()) {
+    curr_token_ = {.kind = TokenKind::End, .text = {}};
+    return;
+  }
+
+  const char curr_char = input_[offset_];
+
+  if (std::isspace(static_cast<unsigned char>(curr_char))) {
+    // clang-format off
+    throw TokenizerError{
+      offset_, input_,
+      {.kind = TokenKind::Invalid, .text = input_.substr(offset_, 1)},
+       "whitespace not allowed"
+    };
+    // clang-format on
+  }
+
+  if (std::isupper(static_cast<unsigned char>(curr_char))) {
+    curr_token_ = lexElementToken();
+    return;
+  }
+
+  if (std::isdigit(static_cast<unsigned char>(curr_char))) {
+    curr_token_ = lexNumberToken();
+    return;
+  }
+
+  if (curr_char == '(' || curr_char == ')' || curr_char == '[' || curr_char == ']' || curr_char == '*') {
+    curr_token_ = lexSingleCharToken(curr_char);
+    return;
+  }
+
+  // clang-format off
+  throw TokenizerError{
+    offset_, input_,
+    {.kind = TokenKind::Invalid, .text = input_.substr(offset_, 1)},
+    std::format("unexpected character '{}'", curr_char)
+  };
+  // clang-format on
 }
 
-void Tokenizer::nextToken() {
-  if (pos_ >= input_.size()) {
-    currToken_ = {.kind = TokenKind::End, .text = {}};
-    return;
+Token Tokenizer::lexElementToken() {
+  assert(std::isupper(static_cast<unsigned char>(input_[offset_])));
+
+  const size_t start = offset_;
+  offset_ += 1;
+
+  while (offset_ < input_.size() && std::islower(static_cast<unsigned char>(input_[offset_]))) {
+    offset_ += 1;
   }
 
-  const char currChar = input_[pos_];
-
-  if (std::isspace(static_cast<unsigned char>(currChar))) {
-    Token token{.kind = TokenKind::Invalid, .text = input_.substr(pos_, 1)};
-    throw TokenizerError{pos_, input_, token, "whitespace not allowed"};
-  }
-
-  // [A-Z][a-z]*
-  if (std::isupper(static_cast<unsigned char>(currChar))) {
-    currToken_ = lexElement();
-    return;
-  }
-
-  // [1-9]?[0-9]*
-  if (std::isdigit(static_cast<unsigned char>(currChar))) {
-    currToken_ = lexNumber();
-    return;
-  }
-
-  if (currChar == '(' || currChar == ')' || currChar == '[' || currChar == ']') {
-    currToken_ = lexDelimiter(currChar);
-    return;
-  }
-
-  Token token{.kind = TokenKind::Invalid, .text = input_.substr(pos_, 1)};
-  throw TokenizerError{pos_, input_, token, std::format("unexpected character '{}'", currChar)};
+  const auto text = input_.substr(start, offset_ - start);
+  return {.kind = TokenKind::Element, .text = text};
 }
 
-Token Tokenizer::lexElement() {
-  const size_t start = pos_;
-  pos_ += 1;
+Token Tokenizer::lexNumberToken() {
+  assert(std::isdigit(static_cast<unsigned char>(input_[offset_])));
 
-  while (pos_ < input_.size() && std::islower(static_cast<unsigned char>(input_[pos_]))) {
-    pos_ += 1;
+  const size_t start = offset_;
+  offset_ += 1;
+
+  while (offset_ < input_.size() && std::isdigit(static_cast<unsigned char>(input_[offset_]))) {
+    offset_ += 1;
   }
 
-  return {.kind = TokenKind::Element, .text = input_.substr(start, pos_ - start)};
-}
+  const auto text = input_.substr(start, offset_ - start);
+  const uint64_t value = std::stoull(std::string{text});
 
-Token Tokenizer::lexNumber() {
-  const size_t start = pos_;
-
-  while (pos_ < input_.size() && std::isdigit(static_cast<unsigned char>(input_[pos_]))) {
-    pos_ += 1;
-  }
-
-  const auto text = input_.substr(start, pos_ - start);
-  Token token{.kind = TokenKind::Number, .text = text};
-
-  const uint64_t value = std::stoull(std::string(text));
-  token.value = value;
+  const Token token{.kind = TokenKind::Number, .text = text, .value = value};
 
   if (value == 0) {
-    throw TokenizerError{start, input_, token, "invalid count (must be ≥ 1)"};
+    throw TokenizerError{start, input_, token, "invalid number (non-positive integer)"};
   }
 
   if (text.starts_with('0')) {
-    throw TokenizerError{start, input_, token, "invalid count (leading zero)"};
+    throw TokenizerError{start, input_, token, "invalid number (leading zero)"};
   }
 
   return token;
 }
 
-Token Tokenizer::lexDelimiter(char del) {
-  Token token;
+Token Tokenizer::lexSingleCharToken(char del) {
+  assert(del == '(' || del == ')' || del == '[' || del == ']' || del == '*');
+
+  TokenKind kind;
+
+  // clang-format off
   switch (del) {
-    case '(':
-      token = {.kind = TokenKind::LParen, .text = "("};
+    case '(': kind = TokenKind::LParen;
       break;
-    case ')':
-      token = {.kind = TokenKind::RParen, .text = ")"};
+    case ')': kind = TokenKind::RParen;
       break;
-    case '[':
-      token = {.kind = TokenKind::LBracket, .text = "["};
+    case '[': kind = TokenKind::LBracket;
       break;
-    case ']':
-      token = {.kind = TokenKind::RBracket, .text = "]"};
+    case ']': kind = TokenKind::RBracket;
       break;
-    default:
-      token = {.kind = TokenKind::Invalid, .text = input_.substr(pos_, 1)};
+    case '*': kind = TokenKind::Star;
+      break;
+    default:  kind = TokenKind::Invalid;
+      break;
   }
-  pos_ += 1;
-  return token;
+  // clang-format on
+
+  const auto text = input_.substr(offset_, 1);
+  offset_ += 1;
+
+  return Token{.kind = kind, .text = text};
 }
 
 }  // namespace cfp

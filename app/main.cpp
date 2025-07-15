@@ -1,11 +1,11 @@
 #include <iostream>
 
+#include "cfp/error/parser_error.hpp"
+#include "cfp/error/tokenizer_error.hpp"
 #include "cfp/parser.hpp"
-#include "cfp/parser_error.hpp"
-#include "cfp/tokenizer_error.hpp"
 
 int main() {
-  cfp::Parser parser{"cl"};
+  cfp::Parser parser{"H2H3H5O"};
 
   try {
     for (const auto &[element, count] : parser.parse()) {

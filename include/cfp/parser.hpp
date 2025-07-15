@@ -13,73 +13,57 @@ namespace cfp {
 
 /**
  * @class Parser
- * @brief Parses chemical formula into element counts using an AST
+ * @brief Parses a chemical formula into element counts.
  *
- * Supports nested bracket groups with multipliers, e.g.:
- *  - Fe2(SO4)3  => {Fe: 2, S: 3, O: 12}
- *  - K[Fe(NO3)2]4 => {K: 1, Fe: 4, N: 8, O: 24}
- *
- * Parsing is done in two phases:
- * 1. Build AST of ElementNode and GroupNode via recursive-descent
- * 2. Walk AST to multiply and accumulate counts into flat map
+ * Supports:
+ *  - single elements & multipliers:                     Fe2        => {Fe: 2}
+ *  - multiple elements:                                 H2O        => {H: 2, O: 1}
+ *  - nested () and [] with multipliers                  Fe2(SO4)3  => {Fe: 2, S: 3, O: 12}
+ *  - ligand groups (*) with optional prefix multipliers CuSO4*5H2O => {Cu: 1, S: 1, O: 9, H: 10}
  */
 class Parser {
 public:
   /**
-   * @brief Constructs parser for the given input string
-   *
-   * @param input  chemical-formula-like string to parse
-   * @throws TokenizerError if lexing error occurs at position 0
+   * @brief Create a parser for the given formula.
+   * @param input  Non-empty formula string (no whitespace).
+   * @throws TokenizerError on any lex error in the first token.
    */
   explicit Parser(std::string_view input);
 
   /**
-   * @brief Parse input and retun {element, count} map
-   *
-   * @return dictionary containing element-count pairs
-   *
-   * @throws ParserError     if grammar is violated
-   * @throws TokenizerError  if lexing error occurs while retrieving tokens
+   * @brief Fully parse and evaluate the formula.
+   * @return A map of element symbol → total count.
+   * @throws ParserError    on grammar errors (mismatches, empties, etc.)
+   * @throws TokenizerError on mid-parse lex errors.
    */
   std::unordered_map<std::string, uint64_t> parse();
 
 private:
-  // lexer for breaking input into tokens
+  /// Lexer for breaking input into tokens.
   Tokenizer tokenizer_;
 
   /**
-   * @brief Builds AST tree (a GroupNode with multiplier = 1)
+   * @brief Build AST tree of units separated by *.
    *
-   * Parses the whole formula into nested GroupNode/ElementNode tree structure
+   * Parses the formula into nested GroupNode/ElementNode tree structure.
    */
   std::unique_ptr<GroupNode> parseAST();
 
   /**
-   * @brief Parses sequence of groups until a closing token or EOF
-   *
-   * Grammar:
-   *   <formula> ::= (<group>)*
-   *
-   * Stops when peek() yields `closing` or `TokenKind::End`.
-   *
-   * @param closing  TokenKind that signals the end of sub-formula, e.g. TokenKind::RParen or TokenKind::RBracket.
-   *                 Pass TokenKind::Invalid at top level to stop only at EOF.
-   *
-   * @return GroupNode containing all parsed children, with default multiplier = 1.
+   * @brief Parse a (sub-)formula: zero or more groups up to closing token.
+   * @param closing  Token that ends this sub-formula (RParen, RBracket, Star),
+   *                 or Invalid to stop at EOF.
+   * @return A GroupNode whose children are all the subgroups.
    */
   std::unique_ptr<GroupNode> parseFormula(TokenKind closing = TokenKind::Invalid);
 
   /**
-   * @brief Parses single group:
-   *  - ElementNode: element with optional count, or
-   *  - GroupNode: a parenthesized/bracketed sub-formula with optional multiplier
+   * @brief Parse a single “group”:
+   *  - ElementNode (symbol + optional number), or
+   *  - GroupNode (parenthesized/bracketed formula + optional multiplier)
    *
-   * Grammar:
-   *   <group> ::= <element> [ <number> ]
-   *             | '(' <formula> ')' [ <number> ]
-   *             | '[' <formula> ']' [ <number> ]
-   *
-   * @return Node pointing to either an ElementNode or GroupNode.
+   * @return ElementNode or GroupNode
+   * @throws ParserError if neither element nor paren/bracket is found
    */
   std::unique_ptr<Node> parseGroup();
 };

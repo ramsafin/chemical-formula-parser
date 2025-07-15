@@ -28,7 +28,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         compiler: [gcc, clang]
-        build_type: [RelWithDebInfo]
+        build_type: [Sanitize, Release]
 
     steps:
       - name: Checkout code
