@@ -7,33 +7,47 @@ on:
       - '**/*.cpp'
       - '**/*.hpp'
       - 'cmake/**'
-      - '.github/workflows/coverage.yml'
-  pull_request:
-    branches: [ master ]
-    paths:
-      - '**/*.cpp'
-      - '**/*.hpp'
-      - 'cmake/**'
+      - 'CMakeLists.txt'
       - '.github/workflows/coverage.yml'
 
 jobs:
-  build-and-test:
+  coverage:
+    name: Coverage Report
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
 
-      - name: Set up
-        run: |
-          sudo apt update && sudo apt install -y cmake ninja-build gcc g++ cmake gcovr lcov
+      - name: Install CMake and Ninja
+        uses: lukka/get-cmake@latest
 
-      - name: Run the workflow
+      - name: Install build and coverage tools
+        run: sudo apt update && sudo apt install -y gcc g++ ccache gcovr lcov ccache
+
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-gcc-Coverage
+
+      - name: Cache build directory
+        uses: actions/cache@v3
+        with:
+          path: build/gcc-Coverage
+          key: ${{ runner.os }}-build-gcc-Coverage
+
+      - name: Configure → Build → Test (Coverage)
+        env:
+          CCACHE_DIR: ~/.ccache
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: cmake --workflow --preset coverage-report
 
-      - name: Generate XML
+      - name: Generate coverage XML
         run: cmake --build --preset gcc-Coverage --target coverage
 
-      - name: Upload to Codecov
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           files: build/gcc-Coverage/coverage.xml
