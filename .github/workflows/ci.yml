@@ -29,9 +29,19 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Install build tools
-        run: sudo apt update && sudo apt install -y clang lld gcc g++
+        run: sudo apt update && sudo apt install -y clang lld gcc g++ ccache
+
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-${{ matrix.compiler }}-${{ matrix.build_type }}
 
       - name: Configure with CMake Preset
+        env:
+          CCACHE_DIR: ~/.ccache
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: cmake --preset ${{ matrix.compiler }}-${{ matrix.build_type }}
 
       - name: Build (Ninja)
