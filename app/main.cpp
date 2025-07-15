@@ -1,25 +1,48 @@
+#include <exception>
 #include <iostream>
+#include <string>
 
 #include "cfp/error/parser_error.hpp"
 #include "cfp/error/tokenizer_error.hpp"
 #include "cfp/parser.hpp"
 
-int main() {
-  cfp::Parser parser{"H2H3H5O"};
-
+void process(const std::string &formula) {
   try {
-    for (const auto &[element, count] : parser.parse()) {
-      std::cout << element << ": " << count << '\n';
+    cfp::Parser parser{formula};
+    const auto counts = parser.parse();
+
+    for (auto const &[elem, count] : counts) {
+      std::cout << elem << ": " << count << "\n";
     }
   } catch (const cfp::TokenizerError &e) {
-    std::cerr << "Lexing failed:\n" << e.what() << "\n";
-    return 2;
+    std::cerr << "Lex error: " << e.what() << "\n";
   } catch (const cfp::ParserError &e) {
-    std::cerr << "Parsing failed:\n" << e.what() << "\n";
-    return 3;
+    std::cerr << "Parse error: " << e.what() << "\n";
   } catch (const std::exception &e) {
-    std::cerr << "Unexpected error:\n" << e.what() << "\n";
-    return 4;
+    std::cerr << "Error: " << e.what() << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (argc > 1) {
+    // each argument is a formula
+    for (int idx = 1; idx < argc; idx++) {
+      std::cout << "Formula: " << argv[idx] << "\n";
+      process(argv[idx]);
+      std::cout << "----\n";
+    }
+    return 0;
+  }
+
+  // no args (interactive mode)
+  std::string line;
+  std::cout << "Enter formula (Ctrl-D to quit):\n> ";
+
+  while (std::getline(std::cin, line)) {
+    if (!line.empty()) {
+      process(line);
+    }
+    std::cout << "> ";
   }
 
   return 0;

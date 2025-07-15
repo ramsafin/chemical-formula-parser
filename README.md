@@ -159,6 +159,25 @@ Run unit tests:
 ctest --preset gcc-RelWithDebInfo
 ```
 
+## Application
+
+A minimal CLI app is included (e.g. at `app/main.cpp`) that shows how to use the parser and handle errors. You can either pass one or more formulas as arguments, or run it interactively.
+
+```bash
+# escape parens and brackets in bash environemnts!
+./build/gcc-RelWithDebInfo/cfp_app H2O Fe2\(SO4\)3 CuSO4*5H2O
+```
+
+Interactive REPL:
+```bash
+./build/gcc-RelWithDebInfo/cfp_app
+Enter formula (Ctrl-D to quit):
+> K[Fe(NO3)2]4
+... # outout 1
+> H2O
+... # output 2
+```
+
 ## Developer Tooling
 
 ### Code Formatting
