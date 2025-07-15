@@ -164,7 +164,7 @@ ctest --preset gcc-RelWithDebInfo
 
 ## Application
 
-A minimal CLI app is included (e.g. at `app/main.cpp`) that shows how to use the parser and handle errors. You can either pass one or more formulas as arguments, or run it interactively.
+A minimal CLI app is included (see `app/main.cpp`) that shows how to use the parser and handle errors. You can either pass one or more formulas as arguments, or run it interactively.
 
 ```bash
 # escape parens and brackets in bash environemnts!
