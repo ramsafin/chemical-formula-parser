@@ -18,16 +18,26 @@ std::unordered_map<std::string, uint64_t> Parser::parse() {
 }
 
 std::unique_ptr<GroupNode> Parser::parseAST() {
+  // empty formula check
+  if (const auto token = tokenizer_.peek(); token.kind == TokenKind::End) {
+    throw ParserError{token, "empty formula"};
+  }
+
   // top-level group (may contain multiple units separated by Star)
   auto root = std::make_unique<GroupNode>(/*mult=*/1);
 
+  // one or more units separated by '*'
   while (true) {
-    // optional prefix multiplier for unit
+    // optional prefix multiplier
     uint64_t unit_mult = 1;
 
     if (const auto token = tokenizer_.peek(); token.kind == TokenKind::Number) {
       unit_mult = *token.value;
       tokenizer_.next();
+    }
+
+    if (const auto token = tokenizer_.peek(); token.kind == TokenKind::Star || token.kind == TokenKind::End) {
+      throw ParserError{token, std::format("expected formula after multiplier ({})", unit_mult)};
     }
 
     // parse one formula unit (stops at Star or End)
@@ -50,7 +60,7 @@ std::unique_ptr<GroupNode> Parser::parseAST() {
     break;
   }
 
-  // handle invalid trailing tokens
+  // no trailing tokens allowed
   if (const auto token = tokenizer_.peek(); token.kind != TokenKind::End) {
     throw ParserError{token, std::format("unexpected token '{}' after unit", token.text)};
   }
@@ -64,11 +74,26 @@ std::unique_ptr<GroupNode> Parser::parseFormula(TokenKind closing) {
   while (true) {
     const auto token = tokenizer_.peek();
 
+    // clang-format off
+    // handle mismatched brackets/paren
+    if (
+      (closing == TokenKind::RParen || closing == TokenKind::RBracket) &&
+      (token.kind == TokenKind::RParen || token.kind == TokenKind::RBracket) && token.kind != closing) {
+      throw ParserError{
+        token,
+        std::format(
+          "unmatched '{}' - expected '{}'",
+          token.text, closing == TokenKind::RParen ? ")" : "]"
+        )
+      };
+    }
+    // clang-format on
+
     if (token.kind == closing || token.kind == TokenKind::End) {
       break;  // reached the end of formula
     }
 
-    group->children.push_back(parseGroup());
+    group->children.emplace_back(parseGroup());
   }
 
   return group;
@@ -77,7 +102,17 @@ std::unique_ptr<GroupNode> Parser::parseFormula(TokenKind closing) {
 std::unique_ptr<Node> Parser::parseGroup() {
   const auto token = tokenizer_.peek();
 
-  // element + optional count
+  // invalid '*' inside the group
+  if (token.kind == TokenKind::Star) {
+    throw ParserError{token, "unexpected '*' inside group"};
+  }
+
+  // invalid closing brackets/paren inside the group
+  if (token.kind == TokenKind::RParen || token.kind == TokenKind::RBracket) {
+    throw ParserError{token, std::format("unmatched '{}'", token.text)};
+  }
+
+  // Element [Number]
   if (token.kind == TokenKind::Element) {
     tokenizer_.next();
 
@@ -91,42 +126,36 @@ std::unique_ptr<Node> Parser::parseGroup() {
     return std::make_unique<ElementNode>(token.text, count);
   }
 
-  // group: opening paren '(' or bracket '['
+  // '(' formula ')' [Number] or '[' formula ']' [Number]
   if (token.kind == TokenKind::LParen || token.kind == TokenKind::LBracket) {
-    tokenizer_.next();
-
     const bool is_paren = (token.kind == TokenKind::LParen);
     const auto matching_closer = is_paren ? TokenKind::RParen : TokenKind::RBracket;
 
-    // parse inner formula up to matching ')' or ']'
-    auto inner_group = parseFormula(matching_closer);
+    tokenizer_.next();
 
-    if (inner_group->children.empty()) {
-      throw ParserError{token, "empty group not allowed"};
+    // parse inner formula up to matching bracket/paren
+    auto subgroup = parseFormula(matching_closer);
+
+    if (const auto closer = tokenizer_.peek(); closer.kind != matching_closer) {
+      throw ParserError{closer, is_paren ? "unmatched '(' - expected ')'" : "unmatched '[' - expected ']'"};
     }
 
-    // expect matching closing token
-    if (const auto closer_token = tokenizer_.peek(); closer_token.kind != matching_closer) {
-      // clang-format off
-      throw ParserError{
-        closer_token, is_paren ?
-        "unmatched '(' — expected ')'" : "unmatched '[' — expected ']'"
-      };
-      // clang-format on
+    if (subgroup->children.empty()) {
+      throw ParserError{token, "empty group not allowed"};
     }
 
     tokenizer_.next();
 
-    // optional group multiplier
-    uint64_t mult = 1;
+    // optional multiplier
+    uint64_t group_mult = 1;
 
     if (const auto next_token = tokenizer_.peek(); next_token.kind == TokenKind::Number) {
-      mult = *next_token.value;
+      group_mult = *next_token.value;
       tokenizer_.next();
     }
 
-    inner_group->multiplier = mult;
-    return inner_group;
+    subgroup->multiplier = group_mult;
+    return subgroup;
   }
 
   // anything else is an error

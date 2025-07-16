@@ -51,8 +51,7 @@ private:
 
   /**
    * @brief Parse a (sub-)formula: zero or more groups up to closing token.
-   * @param closing  Token that ends this sub-formula (RParen, RBracket, Star),
-   *                 or Invalid to stop at EOF.
+   * @param closing  Token that ends this sub-formula (RParen, RBracket, Star).
    * @return A GroupNode whose children are all the subgroups.
    */
   std::unique_ptr<GroupNode> parseFormula(TokenKind closing = TokenKind::Invalid);
