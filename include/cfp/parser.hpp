@@ -32,7 +32,7 @@ public:
 
   /**
    * @brief Fully parse and evaluate the formula.
-   * @return A map of element symbol → total count.
+   * @return A map of element symbol to total count.
    * @throws ParserError    on grammar errors (mismatches, empties, etc.)
    * @throws TokenizerError on mid-parse lex errors.
    */
