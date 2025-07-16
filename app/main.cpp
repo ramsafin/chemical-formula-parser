@@ -9,9 +9,8 @@
 void process(const std::string &formula) {
   try {
     cfp::Parser parser{formula};
-    const auto counts = parser.parse();
 
-    for (const auto &[elem, count] : counts) {
+    for (const auto &[elem, count] : parser.parse()) {
       std::cout << elem << ": " << count << "\n";
     }
   } catch (const cfp::TokenizerError &err) {
@@ -39,9 +38,7 @@ int main(int argc, char **argv) {
   std::cout << "Enter formula (Ctrl-D to quit):\n> ";
 
   while (std::getline(std::cin, line)) {
-    if (!line.empty()) {
-      process(line);
-    }
+    process(line);
     std::cout << "> ";
   }
 
