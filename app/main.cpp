@@ -14,12 +14,12 @@ void process(const std::string &formula) {
     for (auto const &[elem, count] : counts) {
       std::cout << elem << ": " << count << "\n";
     }
-  } catch (const cfp::TokenizerError &e) {
-    std::cerr << "Lex error: " << e.what() << "\n";
-  } catch (const cfp::ParserError &e) {
-    std::cerr << "Parse error: " << e.what() << "\n";
-  } catch (const std::exception &e) {
-    std::cerr << "Error: " << e.what() << "\n";
+  } catch (const cfp::TokenizerError &err) {
+    std::cerr << "Lex error: " << err.what() << "\n";
+  } catch (const cfp::ParserError &err) {
+    std::cerr << "Parse error: " << err.what() << "\n";
+  } catch (const std::exception &err) {
+    std::cerr << "Error: " << err.what() << "\n";
   }
 }
 
