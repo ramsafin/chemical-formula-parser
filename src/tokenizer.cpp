@@ -35,7 +35,7 @@ void Tokenizer::next() {
     throw TokenizerError{
       offset_, input_,
       {.kind = TokenKind::Invalid, .text = input_.substr(offset_, 1)},
-       "whitespace not allowed"
+      "whitespace not allowed"
     };
     // clang-format on
   }
