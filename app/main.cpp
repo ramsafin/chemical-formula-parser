@@ -11,7 +11,7 @@ void process(const std::string &formula) {
     cfp::Parser parser{formula};
     const auto counts = parser.parse();
 
-    for (auto const &[elem, count] : counts) {
+    for (const auto &[elem, count] : counts) {
       std::cout << elem << ": " << count << "\n";
     }
   } catch (const cfp::TokenizerError &err) {
