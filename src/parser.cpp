@@ -76,9 +76,9 @@ std::unique_ptr<GroupNode> Parser::parseFormula(TokenKind closing) {
 
     // clang-format off
     // handle mismatched brackets/paren
-    if (
-      (closing == TokenKind::RParen || closing == TokenKind::RBracket) &&
-      (token.kind == TokenKind::RParen || token.kind == TokenKind::RBracket) && token.kind != closing) {
+    if ((closing == TokenKind::RParen || closing == TokenKind::RBracket) &&
+        (token.kind == TokenKind::RParen || token.kind == TokenKind::RBracket) && 
+        token.kind != closing) {
       throw ParserError{
         token,
         std::format(
