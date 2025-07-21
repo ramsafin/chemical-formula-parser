@@ -262,7 +262,7 @@ cmake --install build/gcc-RelWithDebInfo --prefix install  # or /usr/local
 
 After installation, consume the library like this in another CMake project:
 ```bash
-find_package(chemical_formula_parser REQUIRED)
+find_package(cfp REQUIRED)
 add_executable(app ...)
 target_link_libraries(app PRIVATE cfp::cfp)
 ```
