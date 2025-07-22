@@ -176,6 +176,21 @@ A minimal CLI app is included (see [`app/main.cpp`](app/main.cpp)) that shows ho
 ```bash
 # escape paren, brackets, and `*` operator!
 ./build/gcc-RelWithDebInfo/cfp_app H2O Fe2\(SO4\)3 CuSO4\*5H2O
+Formula: H2O
+O: 1
+H: 2
+----
+Formula: Fe2(SO4)3
+O: 12
+S: 3
+Fe: 2
+----
+Formula: CuSO4*5H2O
+H: 10
+O: 9
+S: 1
+Cu: 1
+----
 ```
 
 Interactive REPL:
