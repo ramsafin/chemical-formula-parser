@@ -26,8 +26,6 @@
 
 Implement a program that reads a chemical-formula-like string, parses it according to the following rules, and outputs the counts of each element. The output format is free: simply print all found elements and their counts. The program should be designed to be easily extendable as new parts are added.
 
-> Each part is implemented step-by-step (see the tags to refer to each part).
-
 ### Part 1. Single-element tokens
 
 The input is a single element token: an uppercase letter followed by optional lowercase letters, with an optional positive integer count (default = 1). Invalid tokens (zero or negative counts, incorrect casing, leading digits) must be rejected with a clear error.
@@ -68,7 +66,7 @@ K[Fe(NO3)2]4      # => K: 1, Fe: 4, N: 8, O: 24
 
 ### Part 4. Ligand groups (hydrate notation)
 
-Support ligand groups separated by `*` (asterisk). Both sides of the `*` may themselves be full formulas, optionally prefixed by a multiplier.
+Support ligand groups separated by `*` (asterisk or star). Both sides of the `*` may themselves be full formulas, optionally prefixed by a multiplier.
 
 Example:
 ```text
@@ -173,7 +171,7 @@ ctest --preset gcc-RelWithDebInfo
 
 ## Application
 
-A minimal CLI app is included (see `app/main.cpp`) that shows how to use the parser and handle errors. You can either pass one or more formulas as arguments, or run it interactively.
+A minimal CLI app is included (see [`app/main.cpp`](app/main.cpp)) that shows how to use the parser and handle errors. You can either pass one or more formulas as arguments, or run it interactively.
 
 ```bash
 # escape paren, brackets, and `*` operator!
@@ -185,9 +183,15 @@ Interactive REPL:
 ./build/gcc-RelWithDebInfo/cfp_app
 Enter formula (Ctrl-D to quit):
 > K[Fe(NO3)2]4
-... # output 1
-> H2O
-... # output 2
+O: 24
+N: 8
+Fe: 4
+K: 1
+> CuSO4*5H2O
+H: 10
+O: 9
+S: 1
+Cu: 1
 ```
 
 ## Parsing Rules
@@ -220,7 +224,7 @@ End      ::= end‐of‐input   ; EOF marker
 
 ### Code Formatting
 
-Format all C++ files using `.clang-format`.
+Format all C++ files using [`.clang-format`](.clang-format).
 
 Check formatting:
 ```bash
@@ -241,7 +245,7 @@ cmake --preset gcc-RelWithDebInfo
 cmake --build --preset gcc-RelWithDebInfo --target clang-tidy
 ```
 
-> Configurable via `.clang-tidy`, with selective checks enabled.
+> Configurable via [`.clang-tidy`](.clang-tidy), with selective checks enabled.
 
 Run `cppcheck` analysis:
 ```bash
